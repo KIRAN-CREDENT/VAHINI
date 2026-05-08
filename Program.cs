@@ -8,13 +8,16 @@ var builder = WebApplication.CreateBuilder(args);
 builder.WebHost.UseUrls($"http://0.0.0.0:{Environment.GetEnvironmentVariable("PORT") ?? "8080"}");
 
 // Add services to the container.
-// 1. Get the Raw Connection String
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+// 1. Prioritize Railway's native variable, then Fallback to appsettings
+string rawUrl = Environment.GetEnvironmentVariable("DATABASE_URL") 
+                ?? builder.Configuration.GetConnectionString("DefaultConnection");
 
-// 2. Adaptive Parser for Railway/Production
-if (!string.IsNullOrEmpty(connectionString) && connectionString.StartsWith("postgres://"))
+string connectionString = rawUrl;
+
+// 2. The Cloud Translator
+if (!string.IsNullOrEmpty(rawUrl) && rawUrl.StartsWith("postgres://"))
 {
-    var databaseUri = new Uri(connectionString);
+    var databaseUri = new Uri(rawUrl);
     var userInfo = databaseUri.UserInfo.Split(':');
     var port = databaseUri.Port == -1 ? 5432 : databaseUri.Port;
     connectionString = $"Host={databaseUri.Host};Port={port};Database={databaseUri.AbsolutePath.TrimStart('/')};Username={userInfo[0]};Password={userInfo[1]};SSL Mode=Require;Trust Server Certificate=true;";
