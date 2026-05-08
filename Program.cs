@@ -16,7 +16,8 @@ if (!string.IsNullOrEmpty(connectionString) && connectionString.StartsWith("post
 {
     var databaseUri = new Uri(connectionString);
     var userInfo = databaseUri.UserInfo.Split(':');
-    connectionString = $"Host={databaseUri.Host};Port={databaseUri.Port};Database={databaseUri.AbsolutePath.TrimStart('/')};Username={userInfo[0]};Password={userInfo[1]};SSL Mode=Require;Trust Server Certificate=true;";
+    var port = databaseUri.Port == -1 ? 5432 : databaseUri.Port;
+    connectionString = $"Host={databaseUri.Host};Port={port};Database={databaseUri.AbsolutePath.TrimStart('/')};Username={userInfo[0]};Password={userInfo[1]};SSL Mode=Require;Trust Server Certificate=true;";
 }
 
 // 3. Register the Context
@@ -57,7 +58,7 @@ else
     app.UseHsts();
 }
 
-app.UseHttpsRedirection();
+// app.UseHttpsRedirection(); // COMMENT THIS OUT FOR RAILWAY
 app.UseStaticFiles();
 
 app.UseRouting();
