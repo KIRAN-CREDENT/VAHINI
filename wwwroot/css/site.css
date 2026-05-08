@@ -1,0 +1,556 @@
+/* ═══════════════════════════════════════════════════════════════════
+   VAHINI — DataOps Design System
+   Professional laboratory-grade UI using Bootstrap 5 as the grid base
+   ═══════════════════════════════════════════════════════════════════ */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+/* ── CSS Custom Properties ───────────────────────────────────────── */
+:root {
+    /* DEFAULT (LIGHT) */
+    --vahini-bg:          #ffffff;
+    --vahini-surface:     #f8f9fa;
+    --vahini-surface-2:   #e9ecef;
+    --vahini-border:      #dee2e6;
+    --vahini-text:        #212529;
+    --vahini-text-muted:  #6c757d;
+    --vahini-accent:      #0d6efd;
+    --vahini-accent-glow: rgba(13, 110, 253, 0.15);
+
+    --stat-card-shadow:   0 4px 12px rgba(0,0,0,0.05);
+    --stat-card-border:   transparent;
+
+    --c-pending:          #d29922;
+    --c-inprogress:       #2f81f7;
+    --c-inreview:         #a371f7;
+    --c-completed:        #3fb950;
+    --c-rejected:         #f85149;
+
+    --radius-sm:  6px;
+    --radius-md:  10px;
+    --radius-lg:  14px;
+    --transition: 0.18s ease;
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --vahini-bg:          #0d1117;
+        --vahini-surface:     #161b22;
+        --vahini-surface-2:   #1c2128;
+        --vahini-border:      #30363d;
+        --vahini-text:        #e6edf3;
+        --vahini-text-muted:  #8b949e;
+        --vahini-accent:      #2f81f7;
+        --vahini-accent-glow: rgba(47, 129, 247, 0.15);
+        
+        --stat-card-shadow:   none;
+        --stat-card-border:   var(--vahini-border);
+    }
+}
+
+/* ── Global Reset ────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; }
+
+html, body {
+    background-color: var(--vahini-bg) !important;
+    color: var(--vahini-text) !important;
+    font-family: 'Inter', system-ui, sans-serif;
+    font-size: 14px;
+    min-height: 100vh;
+}
+
+/* ── Scrollbar ───────────────────────────────────────────────────── */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: var(--vahini-bg); }
+::-webkit-scrollbar-thumb { background: var(--vahini-border); border-radius: 3px; }
+
+/* ════════════════════════════════════════════════════════════════════
+   NAVBAR
+   ════════════════════════════════════════════════════════════════════ */
+.navbar {
+    background: var(--vahini-surface) !important;
+    border-bottom: 1px solid var(--vahini-border) !important;
+    padding: 0 1.5rem;
+    height: 56px;
+    box-shadow: none !important;
+}
+
+.navbar-brand {
+    font-weight: 700;
+    font-size: 1.1rem;
+    letter-spacing: -0.02em;
+    color: var(--vahini-text) !important;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.navbar-brand::before {
+    content: '';
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    background: var(--vahini-accent);
+    border-radius: 50%;
+    box-shadow: 0 0 8px var(--vahini-accent);
+}
+
+.nav-link {
+    color: var(--vahini-text-muted) !important;
+    font-weight: 500;
+    font-size: 0.875rem;
+    padding: 0.5rem 0.875rem !important;
+    border-radius: var(--radius-sm);
+    transition: color var(--transition), background var(--transition);
+}
+
+.nav-link:hover,
+.nav-link.active {
+    color: var(--vahini-text) !important;
+    background: var(--vahini-surface-2);
+}
+
+.nav-link.vahini-nav-admin  { color: #a371f7 !important; }
+.nav-link.vahini-nav-member { color: var(--vahini-accent) !important; }
+.nav-link.vahini-nav-admin:hover  { background: rgba(163,113,247,0.12); }
+.nav-link.vahini-nav-member:hover { background: var(--vahini-accent-glow); }
+
+/* ── Login partial links ─────────────────────────────────────────── */
+.navbar .navbar-text,
+.navbar a.nav-link { color: var(--vahini-text-muted) !important; }
+
+/* ════════════════════════════════════════════════════════════════════
+   LAYOUT CONTAINER
+   ════════════════════════════════════════════════════════════════════ */
+.container, .container-fluid {
+    padding-top: 2rem;
+    padding-bottom: 2rem;
+}
+
+/* ════════════════════════════════════════════════════════════════════
+   PAGE TITLE
+   ════════════════════════════════════════════════════════════════════ */
+.vahini-page-title {
+    font-size: 1.4rem;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    color: var(--vahini-text);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.vahini-badge-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    display: inline-block;
+    animation: pulse-dot 2.4s ease infinite;
+}
+
+@keyframes pulse-dot {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50%       { opacity: 0.5; transform: scale(0.85); }
+}
+
+/* ════════════════════════════════════════════════════════════════════
+   STAT CARDS
+   ════════════════════════════════════════════════════════════════════ */
+.vahini-stat-card {
+    background: var(--vahini-surface);
+    border: 1px solid var(--stat-card-border);
+    border-left-width: 3px;
+    border-radius: var(--radius-md);
+    padding: 1.25rem 1.5rem;
+    box-shadow: var(--stat-card-shadow);
+    transition: transform var(--transition), box-shadow var(--transition);
+}
+
+.vahini-stat-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+}
+
+.border-pending    { border-left-color: var(--c-pending) !important; }
+.border-inprogress { border-left-color: var(--c-inprogress) !important; }
+.border-inreview   { border-left-color: var(--c-inreview) !important; }
+.border-completed  { border-left-color: var(--c-completed) !important; }
+
+.vahini-stat-label {
+    font-size: 0.72rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--vahini-text-muted);
+    margin-bottom: 0.4rem;
+}
+
+.vahini-stat-value {
+    font-size: 2.4rem;
+    font-weight: 700;
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+    margin-bottom: 0.25rem;
+}
+
+.vahini-stat-sub {
+    font-size: 0.76rem;
+    color: var(--vahini-text-muted);
+}
+
+.text-pending    { color: var(--c-pending)    !important; }
+.text-inprogress { color: var(--c-inprogress) !important; }
+.text-inreview   { color: var(--c-inreview)   !important; }
+.text-completed  { color: var(--c-completed)  !important; }
+
+/* ════════════════════════════════════════════════════════════════════
+   PANEL (card wrapper for tables)
+   ════════════════════════════════════════════════════════════════════ */
+.vahini-panel {
+    background: var(--vahini-surface);
+    border: 1px solid var(--vahini-border);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+}
+
+.vahini-panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.875rem 1.25rem;
+    border-bottom: 1px solid var(--vahini-border);
+    font-weight: 600;
+    font-size: 0.875rem;
+    color: var(--vahini-text);
+    background: var(--vahini-surface-2);
+}
+
+/* ════════════════════════════════════════════════════════════════════
+   TABLE
+   ════════════════════════════════════════════════════════════════════ */
+.vahini-table {
+    color: var(--vahini-text);
+    margin-bottom: 0;
+    --bs-table-bg: transparent;
+    --bs-table-striped-bg: transparent;
+    --bs-table-hover-bg: var(--vahini-surface-2);
+    --bs-table-border-color: var(--vahini-border);
+}
+
+.vahini-table thead th {
+    background: var(--vahini-surface-2);
+    color: var(--vahini-text-muted);
+    font-size: 0.72rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    border-bottom: 1px solid var(--vahini-border);
+    padding: 0.65rem 1rem;
+    white-space: nowrap;
+}
+
+.vahini-table tbody td {
+    padding: 0.75rem 1rem;
+    border-color: var(--vahini-border);
+    vertical-align: middle;
+}
+
+.vahini-table tbody tr:hover td { background: var(--vahini-surface-2); }
+.vahini-table tbody tr:last-child td { border-bottom: none; }
+
+.vahini-batch-title {
+    font-weight: 500;
+    color: var(--vahini-text);
+    font-family: 'Inter', sans-serif;
+    max-width: 280px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* ════════════════════════════════════════════════════════════════════
+   STATUS & PRIORITY PILLS
+   ════════════════════════════════════════════════════════════════════ */
+.vahini-status-pill,
+.vahini-priority-pill {
+    display: inline-block;
+    padding: 2px 10px;
+    border-radius: 20px;
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    white-space: nowrap;
+}
+
+.vahini-status-pending    { background: rgba(210,153,34,0.15);  color: var(--c-pending);    border: 1px solid rgba(210,153,34,0.3);  }
+.vahini-status-inprogress { background: rgba(47,129,247,0.15);  color: var(--c-inprogress); border: 1px solid rgba(47,129,247,0.3);  }
+.vahini-status-inreview   { background: rgba(163,113,247,0.15); color: var(--c-inreview);   border: 1px solid rgba(163,113,247,0.3); }
+.vahini-status-completed  { background: rgba(63,185,80,0.15);   color: var(--c-completed);  border: 1px solid rgba(63,185,80,0.3);   }
+.vahini-status-rejected   { background: rgba(248,81,73,0.15);   color: var(--c-rejected);   border: 1px solid rgba(248,81,73,0.3);   }
+
+.vahini-priority-low    { background: rgba(139,148,158,0.1); color: var(--vahini-text-muted); border: 1px solid var(--vahini-border); }
+.vahini-priority-medium { background: rgba(210,153,34,0.1);  color: var(--c-pending);         border: 1px solid rgba(210,153,34,0.2); }
+.vahini-priority-high   { background: rgba(248,81,73,0.12);  color: var(--c-rejected);        border: 1px solid rgba(248,81,73,0.25); }
+
+/* ════════════════════════════════════════════════════════════════════
+   QUALITY BAR
+   ════════════════════════════════════════════════════════════════════ */
+.vahini-quality-bar {
+    height: 4px;
+    background: var(--vahini-border);
+    border-radius: 2px;
+    overflow: hidden;
+    margin-bottom: 3px;
+    width: 80px;
+}
+
+.vahini-quality-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--c-inprogress), var(--c-completed));
+    border-radius: 2px;
+    transition: width 0.6s ease;
+}
+
+.vahini-quality-text {
+    font-size: 0.72rem;
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--vahini-text-muted);
+}
+
+/* ════════════════════════════════════════════════════════════════════
+   BUTTONS
+   ════════════════════════════════════════════════════════════════════ */
+.btn-vahini-primary {
+    background: var(--vahini-accent);
+    color: #fff;
+    border: none;
+    border-radius: var(--radius-sm);
+    font-weight: 600;
+    font-size: 0.825rem;
+    padding: 0.45rem 1rem;
+    transition: background var(--transition), box-shadow var(--transition);
+}
+
+.btn-vahini-primary:hover {
+    background: #388bfd;
+    box-shadow: 0 0 12px rgba(47,129,247,0.4);
+    color: #fff;
+}
+
+.btn-vahini-ghost {
+    background: transparent;
+    color: var(--vahini-text-muted);
+    border: 1px solid var(--vahini-border);
+    border-radius: var(--radius-sm);
+    font-weight: 500;
+    font-size: 0.825rem;
+    padding: 0.45rem 1rem;
+}
+
+.btn-vahini-ghost:hover {
+    background: var(--vahini-surface-2);
+    color: var(--vahini-text);
+}
+
+.btn-vahini-review {
+    background: rgba(163,113,247,0.15);
+    color: var(--c-inreview);
+    border: 1px solid rgba(163,113,247,0.3);
+    border-radius: var(--radius-sm);
+    font-weight: 600;
+    font-size: 0.775rem;
+    padding: 0.35rem 0.8rem;
+    transition: background var(--transition);
+}
+
+.btn-vahini-review:hover {
+    background: rgba(163,113,247,0.28);
+    color: var(--c-inreview);
+}
+
+.btn-vahini-approve {
+    background: rgba(63,185,80,0.15);
+    color: var(--c-completed);
+    border: 1px solid rgba(63,185,80,0.3);
+    border-radius: var(--radius-sm);
+    font-weight: 600;
+    font-size: 0.825rem;
+    padding: 0.45rem 1rem;
+    transition: background var(--transition);
+}
+
+.btn-vahini-approve:hover { background: rgba(63,185,80,0.28); color: var(--c-completed); }
+
+.btn-vahini-reject {
+    background: rgba(248,81,73,0.12);
+    color: var(--c-rejected);
+    border: 1px solid rgba(248,81,73,0.25);
+    border-radius: var(--radius-sm);
+    font-weight: 600;
+    font-size: 0.825rem;
+    padding: 0.45rem 1rem;
+    transition: background var(--transition);
+}
+
+.btn-vahini-reject:hover { background: rgba(248,81,73,0.25); color: var(--c-rejected); }
+
+/* ════════════════════════════════════════════════════════════════════
+   MODAL
+   ════════════════════════════════════════════════════════════════════ */
+.vahini-modal {
+    background: var(--vahini-surface);
+    border: 1px solid var(--vahini-border);
+    border-radius: var(--radius-lg);
+    color: var(--vahini-text);
+}
+
+.vahini-modal .modal-header {
+    background: var(--vahini-surface-2);
+    border-bottom: 1px solid var(--vahini-border);
+    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+}
+
+.vahini-modal .modal-header .modal-title { font-weight: 600; font-size: 0.95rem; }
+
+.vahini-modal .modal-footer {
+    background: var(--vahini-surface-2);
+    border-top: 1px solid var(--vahini-border);
+}
+
+/* ── Form inputs inside modals ───────────────────────────────────── */
+.vahini-form-label {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--vahini-text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-bottom: 0.35rem;
+}
+
+.vahini-input {
+    background: var(--vahini-bg) !important;
+    border: 1px solid var(--vahini-border) !important;
+    color: var(--vahini-text) !important;
+    border-radius: var(--radius-sm) !important;
+    font-size: 0.875rem;
+    transition: border-color var(--transition), box-shadow var(--transition);
+}
+
+.vahini-input:focus {
+    border-color: var(--vahini-accent) !important;
+    box-shadow: 0 0 0 3px var(--vahini-accent-glow) !important;
+    outline: none;
+}
+
+.vahini-input::placeholder { color: var(--vahini-text-muted) !important; }
+
+/* ════════════════════════════════════════════════════════════════════
+   ALERTS
+   ════════════════════════════════════════════════════════════════════ */
+.vahini-alert {
+    border-radius: var(--radius-md);
+    border: none;
+    font-size: 0.875rem;
+}
+
+.alert-success { background: rgba(63,185,80,0.12);  color: var(--c-completed); border: 1px solid rgba(63,185,80,0.3) !important;  }
+.alert-danger  { background: rgba(248,81,73,0.12);  color: var(--c-rejected);  border: 1px solid rgba(248,81,73,0.25) !important; }
+
+/* ════════════════════════════════════════════════════════════════════
+   MEMBER-SPECIFIC
+   ════════════════════════════════════════════════════════════════════ */
+.vahini-data-link {
+    color: var(--vahini-accent);
+    text-decoration: none;
+    font-size: 0.8rem;
+    font-weight: 500;
+    transition: color var(--transition);
+}
+
+.vahini-data-link:hover { color: #79c0ff; text-decoration: underline; }
+
+.vahini-queue-counter {
+    background: var(--vahini-surface);
+    border: 1px solid var(--vahini-border);
+    border-radius: 20px;
+    padding: 3px 12px;
+    font-size: 0.8rem;
+    color: var(--vahini-text-muted);
+}
+
+.bg-pending    { background: var(--c-pending)    !important; }
+.bg-inprogress { background: var(--c-inprogress) !important; }
+.bg-inreview   { background: var(--c-inreview)   !important; }
+
+/* ════════════════════════════════════════════════════════════════════
+   FOOTER
+   ════════════════════════════════════════════════════════════════════ */
+.footer {
+    background: var(--vahini-surface) !important;
+    border-top: 1px solid var(--vahini-border) !important;
+    color: var(--vahini-text-muted) !important;
+    font-size: 0.78rem;
+    padding: 1rem 0;
+}
+
+.footer a { color: var(--vahini-text-muted) !important; }
+.footer a:hover { color: var(--vahini-text) !important; }
+
+/* ════════════════════════════════════════════════════════════════════
+   BOOTSTRAP BADGE OVERRIDES
+   ════════════════════════════════════════════════════════════════════ */
+.badge.bg-secondary { background: var(--vahini-border) !important; color: var(--vahini-text-muted); }
+
+/* ════════════════════════════════════════════════════════════════════
+   IDENTITY / RAZOR PAGES (login, register forms)
+   ════════════════════════════════════════════════════════════════════ */
+.form-control, .form-select {
+    background: var(--vahini-bg) !important;
+    border-color: var(--vahini-border) !important;
+    color: var(--vahini-text) !important;
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: var(--vahini-accent) !important;
+    box-shadow: 0 0 0 3px var(--vahini-accent-glow) !important;
+}
+
+label { color: var(--vahini-text-muted); font-size: 0.85rem; }
+
+.btn-primary {
+    background: var(--vahini-accent) !important;
+    border-color: var(--vahini-accent) !important;
+}
+
+.btn-primary:hover { background: #388bfd !important; border-color: #388bfd !important; }
+
+/* ── Utility ─────────────────────────────────────────────────────── */
+.text-muted { color: var(--vahini-text-muted) !important; }
+/* ════════════════════════════════════════════════════════════════════
+   IDENTITY UI SCRUB (ETHARA-GRADE)
+   ════════════════════════════════════════════════════════════════════ */
+#external-account,
+#external-login-title,
+.col-md-6.col-md-offset-2 {
+    display: none !important;
+}
+
+h4:has(+ hr) {
+    display: none !important;
+}
+
+.row:has(#account) {
+    justify-content: center;
+}
+
+.row:has(#account) > .col-md-4 {
+    width: 100%;
+    max-width: 420px;
+}
+
+.row:has(#account) form {
+    background: var(--vahini-surface);
+    padding: 2rem;
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--vahini-border);
+}

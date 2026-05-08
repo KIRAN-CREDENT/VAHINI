@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="VAHINI — High-performance DataOps Orchestrator" />
+    <title>@ViewData["Title"] — VAHINI</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+</head>
+<body class="d-flex flex-column min-vh-100">
+    <header>
+        <nav class="navbar navbar-expand-sm">
+            <div class="container-fluid px-4">
+                <a class="navbar-brand" asp-controller="Home" asp-action="Index">VAHINI</a>
+
+                <button class="navbar-toggler border-0" type="button"
+                        data-bs-toggle="collapse" data-bs-target="#navMain"
+                        aria-controls="navMain" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <div class="collapse navbar-collapse" id="navMain">
+                    <ul class="navbar-nav flex-grow-1 gap-1">
+
+                        @* ── Role-conditional pipeline links ────────────────── *@
+                        @if (User.Identity?.IsAuthenticated == true)
+                        {
+                            @if (User.IsInRole("Admin"))
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link vahini-nav-admin"
+                                       asp-controller="Admin" asp-action="Index">
+                                        ⬡ Command Center
+                                    </a>
+                                </li>
+                            }
+
+                            @if (User.IsInRole("Member"))
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link vahini-nav-member"
+                                       asp-controller="Member" asp-action="Index">
+                                        ⬡ Work Queue
+                                    </a>
+                                </li>
+                            }
+                        }
+
+                    </ul>
+
+                    <partial name="_LoginPartial" />
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <div class="container-fluid px-4">
+        <main role="main" class="pb-4">
+            @RenderBody()
+        </main>
+    </div>
+
+    <footer class="footer mt-auto">
+        <div class="container-fluid px-4 d-flex justify-content-between align-items-center">
+            <span>&copy; 2026 VAHINI DataOps Platform</span>
+            <span class="opacity-50" style="font-family:'JetBrains Mono',monospace;font-size:0.72rem">
+                v1.0.0-sprint3
+            </span>
+        </div>
+    </footer>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

@@ -1,0 +1,78 @@
+@page
+@model Vahini.Areas.Identity.Pages.Account.RegisterModel
+@{
+    ViewData["Title"] = "Register";
+}
+
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="vahini-panel p-5">
+            <h2 class="vahini-page-title mb-4">Join VAHINI</h2>
+            <form id="registerForm" asp-route-returnUrl="@Model.ReturnUrl" method="post">
+                <div asp-validation-summary="ModelOnly" class="text-danger mb-3" role="alert"></div>
+                
+                <div class="mb-3">
+                    <label asp-for="Input.Email" class="vahini-form-label"></label>
+                    <input asp-for="Input.Email" class="form-control vahini-input" autocomplete="username" aria-required="true" placeholder="name@example.com" />
+                    <span asp-validation-for="Input.Email" class="text-danger small"></span>
+                </div>
+                
+                <div class="mb-3">
+                    <label asp-for="Input.Password" class="vahini-form-label"></label>
+                    <input asp-for="Input.Password" class="form-control vahini-input" autocomplete="new-password" aria-required="true" placeholder="password" />
+                    <span asp-validation-for="Input.Password" class="text-danger small"></span>
+                </div>
+                
+                <div class="mb-3">
+                    <label asp-for="Input.ConfirmPassword" class="vahini-form-label"></label>
+                    <input asp-for="Input.ConfirmPassword" class="form-control vahini-input" autocomplete="new-password" aria-required="true" placeholder="password" />
+                    <span asp-validation-for="Input.ConfirmPassword" class="text-danger small"></span>
+                </div>
+
+                <hr class="border-secondary my-4" />
+
+                <div class="mb-3">
+                    <label class="vahini-form-label d-block mb-2">Registration Type</label>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" asp-for="Input.RegisterType" value="Member" id="MemberRole" checked onchange="toggleFields()">
+                        <label class="form-check-label" for="MemberRole">Join Organization (Member)</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" asp-for="Input.RegisterType" value="Admin" id="AdminRole" onchange="toggleFields()">
+                        <label class="form-check-label" for="AdminRole">Create Organization (Admin)</label>
+                    </div>
+                </div>
+
+                <div class="mb-4" id="memberFields">
+                    <label asp-for="Input.AccessCode" class="vahini-form-label">Access Code</label>
+                    <input asp-for="Input.AccessCode" class="form-control vahini-input text-uppercase" placeholder="e.g. A1B2C3" />
+                    <span asp-validation-for="Input.AccessCode" class="text-danger small"></span>
+                </div>
+
+                <div class="mb-4 d-none" id="adminFields">
+                    <label asp-for="Input.OrganizationName" class="vahini-form-label">Organization Name</label>
+                    <input asp-for="Input.OrganizationName" class="form-control vahini-input" placeholder="e.g. Vahini HQ" />
+                    <span asp-validation-for="Input.OrganizationName" class="text-danger small"></span>
+                </div>
+
+                <button id="registerSubmit" type="submit" class="btn btn-vahini-primary w-100 py-2">Create Account</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        function toggleFields() {
+            var isAdmin = document.getElementById('AdminRole').checked;
+            if (isAdmin) {
+                document.getElementById('adminFields').classList.remove('d-none');
+                document.getElementById('memberFields').classList.add('d-none');
+            } else {
+                document.getElementById('adminFields').classList.add('d-none');
+                document.getElementById('memberFields').classList.remove('d-none');
+            }
+        }
+    </script>
+}

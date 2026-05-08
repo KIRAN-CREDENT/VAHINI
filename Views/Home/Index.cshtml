@@ -1,0 +1,30 @@
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div class="text-center py-5">
+    <h1 class="display-4 fw-bold mb-4" style="color: var(--vahini-text);">VAHINI: Enterprise DataOps Orchestrator</h1>
+    <p class="lead text-muted mb-5">
+        Streamline your DataOps pipeline with high-performance, real-time workflow management.
+    </p>
+    
+    @if (User.Identity?.IsAuthenticated == true)
+    {
+        @if (User.IsInRole("Admin"))
+        {
+            <a asp-controller="Admin" asp-action="Index" class="btn btn-vahini-primary btn-lg px-5 py-3">Go to Command Center</a>
+        }
+        else if (User.IsInRole("Member"))
+        {
+            <a asp-controller="Member" asp-action="Index" class="btn btn-vahini-primary btn-lg px-5 py-3">Go to Work Queue</a>
+        }
+        else
+        {
+            <a href="/" class="btn btn-vahini-primary btn-lg px-5 py-3">Welcome</a>
+        }
+    }
+    else
+    {
+        <a asp-area="Identity" asp-page="/Account/Login" class="btn btn-vahini-primary btn-lg px-5 py-3">Get Started</a>
+    }
+</div>
