@@ -8,22 +8,26 @@ var builder = WebApplication.CreateBuilder(args);
 builder.WebHost.UseUrls($"http://0.0.0.0:{Environment.GetEnvironmentVariable("PORT") ?? "8080"}");
 
 // Add services to the container.
-// 1. Prioritize Railway's native variable, then Fallback to appsettings
-string rawUrl = Environment.GetEnvironmentVariable("DATABASE_URL") 
-                ?? builder.Configuration.GetConnectionString("DefaultConnection");
+// 1. Deep-Search for the Connection String
+var connectionString = Environment.GetEnvironmentVariable("DATABASE_URL") 
+    ?? Environment.GetEnvironmentVariable("ConnectionStrings__DefaultConnection")
+    ?? builder.Configuration.GetConnectionString("DefaultConnection");
 
-string connectionString = rawUrl;
+Console.WriteLine($"[VAHINI DIAGNOSTIC] Connection String Found: {(!string.IsNullOrEmpty(connectionString))}");
 
-// 2. The Cloud Translator
-if (!string.IsNullOrEmpty(rawUrl) && rawUrl.StartsWith("postgres://"))
+// 2. Cloud URI Parser
+if (!string.IsNullOrEmpty(connectionString) && connectionString.StartsWith("postgres://"))
 {
-    var databaseUri = new Uri(rawUrl);
+    var databaseUri = new Uri(connectionString);
     var userInfo = databaseUri.UserInfo.Split(':');
     var port = databaseUri.Port == -1 ? 5432 : databaseUri.Port;
     connectionString = $"Host={databaseUri.Host};Port={port};Database={databaseUri.AbsolutePath.TrimStart('/')};Username={userInfo[0]};Password={userInfo[1]};SSL Mode=Require;Trust Server Certificate=true;";
 }
 
-// 3. Register the Context
+if (string.IsNullOrEmpty(connectionString)) {
+    throw new Exception("FATAL: VAHINI could not find a valid database connection string in the environment.");
+}
+
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseNpgsql(connectionString));
 
