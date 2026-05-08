@@ -8,18 +8,20 @@ var builder = WebApplication.CreateBuilder(args);
 builder.WebHost.UseUrls($"http://0.0.0.0:{Environment.GetEnvironmentVariable("PORT") ?? "8080"}");
 
 // Add services to the container.
+// 1. Get the Raw Connection String
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 
-// Railway DATABASE_URL Parser
-if (connectionString?.StartsWith("postgres://") == true)
+// 2. Adaptive Parser for Railway/Production
+if (!string.IsNullOrEmpty(connectionString) && connectionString.StartsWith("postgres://"))
 {
     var databaseUri = new Uri(connectionString);
     var userInfo = databaseUri.UserInfo.Split(':');
     connectionString = $"Host={databaseUri.Host};Port={databaseUri.Port};Database={databaseUri.AbsolutePath.TrimStart('/')};Username={userInfo[0]};Password={userInfo[1]};SSL Mode=Require;Trust Server Certificate=true;";
 }
 
+// 3. Register the Context
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseNpgsql(connectionString ?? throw new InvalidOperationException("Connection string not found.")));
+    options.UseNpgsql(connectionString));
 
 // VAHINI services
 builder.Services.AddSingleton<WorkflowService>();
