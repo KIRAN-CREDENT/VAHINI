@@ -12,4 +12,4 @@ WORKDIR /app
 EXPOSE 80
 EXPOSE 443
 COPY --from=build /app/publish .
-ENTRYPOINT ["sh", "-c", "dotnet Vahini.dll --urls http://0.0.0.0:${PORT:-80}"]
+ENTRYPOINT ["dotnet", "Vahini.dll"]
