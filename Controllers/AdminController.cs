@@ -78,6 +78,7 @@ public sealed class AdminController(
         }
         catch (Exception ex)
         {
+            Console.WriteLine($"\n[VAHINI BATCH CREATION FATAL ERROR]\n{ex.ToString()}\n");
             logger.LogError(ex, "Error creating batch {Title}.", batch.Title);
             TempData["Error"] = "An error occurred while creating the batch.";
         }
