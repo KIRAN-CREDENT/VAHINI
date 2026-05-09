@@ -15,12 +15,19 @@ var connectionString = Environment.GetEnvironmentVariable("DATABASE_URL")
 
 Console.WriteLine($"[VAHINI DIAGNOSTIC] Connection String Found: {(!string.IsNullOrEmpty(connectionString))}");
 
-// 2. Cloud URI Parser
-if (!string.IsNullOrEmpty(connectionString) && connectionString.StartsWith("postgres://"))
+// 2. Updated Cloud URI Parser (Handles both postgres:// and postgresql://)
+if (!string.IsNullOrEmpty(connectionString) && 
+   (connectionString.StartsWith("postgres://") || connectionString.StartsWith("postgresql://")))
 {
-    var databaseUri = new Uri(connectionString);
+    // Ensure the URI parser understands the scheme by standardizing it to 'postgres' for the Uri object
+    var uriString = connectionString.StartsWith("postgresql://") 
+        ? connectionString.Replace("postgresql://", "postgres://") 
+        : connectionString;
+
+    var databaseUri = new Uri(uriString);
     var userInfo = databaseUri.UserInfo.Split(':');
     var port = databaseUri.Port == -1 ? 5432 : databaseUri.Port;
+    
     connectionString = $"Host={databaseUri.Host};Port={port};Database={databaseUri.AbsolutePath.TrimStart('/')};Username={userInfo[0]};Password={userInfo[1]};SSL Mode=Require;Trust Server Certificate=true;";
 }
 
