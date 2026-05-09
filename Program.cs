@@ -52,12 +52,25 @@ builder.Services.AddControllersWithViews();
 var app = builder.Build();
 
 // ── Seed roles and default admin on every startup (idempotent) ────────────────
-await using (var scope = app.Services.CreateAsyncScope())
+using (var scope = app.Services.CreateScope())
 {
-    await DbInitializer.SeedAsync(
-        scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>(),
-        scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>(),
-        scope.ServiceProvider.GetRequiredService<ApplicationDbContext>());
+    var services = scope.ServiceProvider;
+    try
+    {
+        var context = services.GetRequiredService<ApplicationDbContext>();
+        
+        // --- ADD THIS LINE ---
+        await context.Database.MigrateAsync(); 
+        // ---------------------
+
+        var userManager = services.GetRequiredService<UserManager<ApplicationUser>>();
+        var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
+        await DbInitializer.SeedAsync(roleManager, userManager, context);
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"[VAHINI ERROR] An error occurred during migration or seeding: {ex.Message}");
+    }
 }
 
 // Configure the HTTP request pipeline.
